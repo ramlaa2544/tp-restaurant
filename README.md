@@ -2,25 +2,6 @@
 
 API REST pour la gestion de restaurants, menus et catégories.  
 Architecture N-tiers modulaire avec Node.js, TypeScript et SQLite.
-
-## 🏗️ Architecture
-backend/src/
-├── config/         ← configuration (isMock)
-├── db/             ← connexion SQLite + seed
-└── modules/
-├── restaurant/ ← module restaurant
-│   ├── controllers/
-│   ├── mocks/
-│   ├── repositories/
-│   │   ├── IRestaurantRepository.ts      (contrat)
-│   │   ├── InMemoryRestaurantRepository.ts (mock)
-│   │   └── SqlRestaurantRepository.ts    (SQL)
-│   ├── schema/
-│   ├── services/
-│   ├── tests/
-│   └── types/
-├── menu/       ← même structure
-└── categorie/  ← même structure
 ## 🚀 Installation
 
 ```bash
