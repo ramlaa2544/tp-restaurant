@@ -27,15 +27,6 @@ npm run seed
 npm test
 ```
 
-## 🔀 Basculer entre Mock et SQL
-
-Dans le fichier `.env` :
-
-```env
-DATA_SOURCE=mock   # données en mémoire
-DATA_SOURCE=sql    # vraie base SQLite
-```
-
 ## 📡 Routes API
 
 ### Restaurants
