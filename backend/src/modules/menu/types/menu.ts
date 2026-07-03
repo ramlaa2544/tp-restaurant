@@ -12,3 +12,5 @@ export interface MenuRequest {
   description: string;
   restoId: number;
 }
+
+export type MenuUpdateRequest = Partial<MenuRequest>;

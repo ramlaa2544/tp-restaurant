@@ -6,3 +6,5 @@ export interface Categorie {
 export interface CategorieRequest {
   nom: string;
 }
+
+export type CategorieUpdateRequest = Partial<CategorieRequest>;

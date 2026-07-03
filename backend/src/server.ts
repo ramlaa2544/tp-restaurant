@@ -12,7 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/restos", restaurantRoutes);
+app.use("/restaurants", restaurantRoutes);
 app.use("/menus", menuRoutes);
 app.use("/categories", categorieRoutes);
 
