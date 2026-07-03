@@ -16,3 +16,5 @@ export interface RestaurantRequest {
   ville: string;
   categorieId: number;
 }
+
+export type RestaurantUpdateRequest = Partial<RestaurantRequest>;
