@@ -1,8 +1,9 @@
 import { Router } from "express";
-import controller from "../composition/categorieComposition";
+import controller from "../composition/restaurantComposition";
 
 const router = Router();
 
+router.get("/search", controller.search);
 router.get("/", controller.getAll);
 router.get("/:id", controller.getById);
 router.post("/", controller.create);

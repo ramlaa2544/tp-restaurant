@@ -1,7 +1,12 @@
 import { Request, Response } from "express";
 import { RestaurantService } from "../services/restaurantService";
 import { createRestaurantSchema, updateRestaurantSchema } from "../schema/restaurantSchema";
-
+import { IFilter } from "../patterns/filters/IFilter";
+import { FilterByPrix } from "../patterns/filters/FilterByPrix";
+import { FilterByCuisine } from "../patterns/filters/FilterByCuisine";
+import { ISortStrategy } from "../patterns/strategies/ISortStrategy";
+import { SortByNote } from "../patterns/strategies/SortByNote";
+import { SortByPrix } from "../patterns/strategies/SortByPrix";
 
 export class RestaurantController {
   constructor(private service: RestaurantService) {}
@@ -22,6 +27,38 @@ export class RestaurantController {
       res.json(restaurant);
     } catch (err: any) {
       res.status(404).json({ message: err.message });
+    }
+  };
+
+  search = async (req: Request, res: Response) => {
+    try {
+      const { prixMax, cuisine, triPar, profil } = req.query;
+
+      console.log("Profil reçu:", profil);
+
+      const filters: IFilter[] = [];
+      if (prixMax) filters.push(new FilterByPrix(Number(prixMax)));
+      if (cuisine) filters.push(new FilterByCuisine(String(cuisine)));
+
+      const sort: ISortStrategy = triPar === "prix"
+        ? new SortByPrix()
+        : new SortByNote();
+
+      const profilArray = profil
+        ? String(profil).split(",").map(Number)
+        : undefined;
+
+      console.log("Profil array:", profilArray);
+
+      const restaurants = await this.service.filtrerEtTrier(
+        filters,
+        sort,
+        profilArray
+      );
+
+      res.json(restaurants);
+    } catch (err: any) {
+      res.status(500).json({ message: err.message });
     }
   };
 
