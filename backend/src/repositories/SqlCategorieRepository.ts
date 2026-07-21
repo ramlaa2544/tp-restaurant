@@ -1,6 +1,7 @@
 import { ICategorieRepository } from "./ICategorieRepository";
 import { Categorie, CategorieRequest, CategorieUpdateRequest } from "../types/categorie";
-import db from "../../../db/client";
+import db from "../db/client";
+
 
 export class SqlCategorieRepository implements ICategorieRepository {
 

@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import restaurantRoutes from "./modules/restaurant/restaurantRoutes";
-import menuRoutes from "./modules/menu/menuRoutes";
-import categorieRoutes from "./modules/categorie/categorieRoutes";
+import restaurantRoutes from "./Routes/restaurantRoutes";
+import menuRoutes from "./Routes/menuRoutes";
+import categorieRoutes from "./Routes/categorieRoutes";
 
 dotenv.config();
 

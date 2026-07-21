@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import { createRestaurantSchema, updateRestaurantSchema } from "../schema/restaurantSchema";
 import { RestaurantService } from "../services/restaurantService";
+import { createRestaurantSchema, updateRestaurantSchema } from "../schema/restaurantSchema";
+
 
 export class RestaurantController {
   constructor(private service: RestaurantService) {}

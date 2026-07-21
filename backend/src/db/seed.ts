@@ -1,4 +1,5 @@
-import db from "./db/client";
+import db from "./client";
+
 
 
 db.exec(`DELETE FROM restaurants`);

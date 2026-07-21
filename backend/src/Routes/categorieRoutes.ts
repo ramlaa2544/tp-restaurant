@@ -1,5 +1,5 @@
 import { Router } from "express";
-import controller from "./categorieComposition";
+import controller from "../composition/categorieComposition";
 
 const router = Router();
 

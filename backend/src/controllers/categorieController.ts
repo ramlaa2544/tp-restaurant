@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { CategorieService } from "../services/categorieService";
 import { createCategorieSchema, updateCategorieSchema } from "../schema/categorieSchema";
 
+
 export class CategorieController {
   constructor(private service: CategorieService) {}
 

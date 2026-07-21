@@ -1,5 +1,8 @@
 import { Menu } from "../types/menu";
 
+
+
+
 export const menusMock: Menu[] = [
   { id: 1, nom: "Steak Frites", prix: 15, description: "Steak avec frites maison", restoId: 1 },
   { id: 2, nom: "Soupe à l'oignon", prix: 8, description: "Soupe traditionnelle française", restoId: 1 },

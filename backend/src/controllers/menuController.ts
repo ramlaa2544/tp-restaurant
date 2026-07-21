@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import { MenuService } from "../services/menuService";
+
 import { createMenuSchema, updateMenuSchema } from "../schema/menuSchema";
+import { MenuService } from "../services/menuService";
 
 export class MenuController {
   constructor(private service: MenuService) {}

@@ -1,6 +1,6 @@
 import { IRestaurantRepository } from "./IRestaurantRepository";
 import { Restaurant, RestaurantRequest, RestaurantUpdateRequest } from "../types/restaurant";
-import db from "../../../db/client";
+import db from "../db/client";
 
 export class SqlRestaurantRepository implements IRestaurantRepository {
 

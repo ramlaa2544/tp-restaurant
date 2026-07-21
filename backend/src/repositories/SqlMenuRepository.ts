@@ -1,6 +1,6 @@
 import { IMenuRepository } from "./IMenuRepository";
 import { Menu, MenuRequest, MenuUpdateRequest } from "../types/menu";
-import db from "../../../db/client";
+import db from "../db/client";
 
 export class SqlMenuRepository implements IMenuRepository {
 
