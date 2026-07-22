@@ -17,46 +17,67 @@ function App() {
   const [populariteMin, setPopulariteMin] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { favoris, ajouterFavori, supprimerFavori, estFavori } = useFavoris();
+  const { favoris, ajouterFavori, supprimerFavori, viderFavoris, estFavori } = useFavoris();
 
   useEffect(() => { chargerTous(); }, []);
 
   const chargerTous = async () => {
     setLoading(true);
-    const res = await axios.get(`${API}/restaurants`);
-    setRestaurants(res.data);
-    setLoading(false);
+    try {
+      const res = await axios.get(`${API}/restaurants`);
+      setRestaurants(res.data);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const rechercher = async () => {
     setLoading(true);
-    const params: Record<string, string> = { triPar };
-    if (prixMax) params.prixMax = prixMax;
-    if (cuisine) params.cuisine = cuisine;
-    if (distanceMax) params.distanceMax = distanceMax;
-    if (populariteMin) params.populariteMin = populariteMin;
-    const res = await axios.get(`${API}/restaurants/search`, { params });
-    setRestaurants(res.data);
-    setLoading(false);
+    try {
+      const params: Record<string, string> = { triPar };
+      if (prixMax) params.prixMax = prixMax;
+      if (cuisine) params.cuisine = cuisine;
+      if (distanceMax) params.distanceMax = distanceMax;
+      if (populariteMin) params.populariteMin = populariteMin;
+      const res = await axios.get(`${API}/restaurants/search`, { params });
+      setRestaurants(res.data);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const recommander = () => {
+  const recommander = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(`${API}/restaurants/recommend`);
+      setRestaurants(res.data);
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Erreur lors de la recommandation");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const afficherFavoris = () => {
     if (favoris.length === 0) {
-      alert("Ajoutez des favoris d'abord !");
+      alert("Aucun favori pour le moment.");
       return;
     }
-    const favorisTries = [...favoris].sort((a, b) => b.note - a.note);
-    setRestaurants(favorisTries);
+    setRestaurants(favoris);
   };
 
-  const viderFavoris = () => {
-    localStorage.clear();
-    window.location.reload();
+  const handleViderFavoris = async () => {
+    if (!confirm("Vider tous les favoris ?")) return;
+    await viderFavoris();
   };
 
   const ajouterRestaurant = async (data: Omit<Restaurant, "id">) => {
-    await axios.post(`${API}/restaurants`, data);
-    chargerTous();
+    try {
+      await axios.post(`${API}/restaurants`, data);
+      await chargerTous();
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Erreur lors de la création");
+    }
   };
 
   const modifierRestaurant = async (id: number, data: Partial<Restaurant>) => {
@@ -67,14 +88,15 @@ function App() {
   const supprimerRestaurant = async (id: number) => {
     if (!confirm("Supprimer ce restaurant ?")) return;
     await axios.delete(`${API}/restaurants/${id}`);
+    if (estFavori(id)) await supprimerFavori(id);
     chargerTous();
   };
 
-  const gererFavori = (restaurant: Restaurant) => {
+  const gererFavori = async (restaurant: Restaurant) => {
     if (estFavori(restaurant.id)) {
-      supprimerFavori(restaurant.id);
+      await supprimerFavori(restaurant.id);
     } else {
-      ajouterFavori(restaurant);
+      await ajouterFavori(restaurant);
     }
   };
 
@@ -95,10 +117,11 @@ function App() {
           display: "inline-block", marginTop: "15px",
           backgroundColor: "rgba(255,255,255,0.2)",
           borderRadius: "20px", padding: "6px 16px", fontSize: "0.9rem",
-        }}>
+          cursor: "pointer",
+        }} onClick={afficherFavoris} title="Voir mes favoris">
           ❤️ {favoris.length} favori(s)
         </div>
-        <button onClick={viderFavoris} style={{
+        <button onClick={handleViderFavoris} style={{
           marginTop: "10px", padding: "6px 16px",
           backgroundColor: "rgba(255,255,255,0.2)", color: "white",
           border: "1px solid rgba(255,255,255,0.4)", borderRadius: "20px",
@@ -115,7 +138,7 @@ function App() {
           distanceMax={distanceMax} populariteMin={populariteMin}
           onPrixMax={setPrixMax} onCuisine={setCuisine} onTriPar={setTriPar}
           onDistanceMax={setDistanceMax} onPopulariteMin={setPopulariteMin}
-          onSearch={rechercher} onScoring={recommander}
+          onSearch={rechercher} onScoring={recommander} onFavoris={afficherFavoris}
         />
         <button onClick={chargerTous} style={{
           marginBottom: "20px", padding: "8px 16px", backgroundColor: "white",

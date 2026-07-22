@@ -8,4 +8,6 @@ export interface Restaurant {
   categorieId: number;
   popularite: number;
   distance: number;
+  /** Présent uniquement après une recommandation */
+  score?: number;
 }

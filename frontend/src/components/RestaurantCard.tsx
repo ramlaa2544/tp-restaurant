@@ -4,7 +4,7 @@ import type { Restaurant } from "../type/restaurant";
 interface Props {
   restaurant: Restaurant;
   estFavori: boolean;
-  onFavori: (restaurant: Restaurant) => void;
+  onFavori: (restaurant: Restaurant) => void | Promise<void>;
   onSupprimer: (id: number) => void;
   onModifier: (id: number, data: Partial<Restaurant>) => void;
 }
@@ -47,6 +47,15 @@ export function RestaurantCard({ restaurant, estFavori, onFavori, onSupprimer, o
         <h3 style={{ color: "white", margin: "8px 0 0 0", fontSize: "1.1rem", fontWeight: "700" }}>
           {restaurant.nom}
         </h3>
+        {restaurant.score !== undefined && (
+          <div style={{
+            marginTop: "8px", display: "inline-block",
+            backgroundColor: "rgba(255,255,255,0.25)", borderRadius: "12px",
+            padding: "2px 10px", fontSize: "0.8rem", color: "white",
+          }}>
+            Match {Math.round(restaurant.score * 100)}%
+          </div>
+        )}
         {estFavori && <div style={{ position: "absolute", top: "10px", right: "10px", fontSize: "1.2rem" }}>❤️</div>}
       </div>
 

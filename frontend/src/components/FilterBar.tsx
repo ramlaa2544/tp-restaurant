@@ -11,12 +11,13 @@ interface Props {
   onPopulariteMin: (val: string) => void;
   onSearch: () => void;
   onScoring: () => void;
+  onFavoris: () => void;
 }
 
 export function FilterBar({
   prixMax, cuisine, triPar, distanceMax, populariteMin,
   onPrixMax, onCuisine, onTriPar, onDistanceMax, onPopulariteMin,
-  onSearch, onScoring,
+  onSearch, onScoring, onFavoris,
 }: Props) {
   return (
     <div style={{
@@ -59,11 +60,18 @@ export function FilterBar({
           🔍 Rechercher
         </button>
 
+        <button onClick={onFavoris} style={{
+          padding: "10px 20px", backgroundColor: "#ff6b6b", color: "white",
+          border: "none", borderRadius: "10px", cursor: "pointer", fontWeight: "700",
+        }}>
+          ❤️ Mes favoris
+        </button>
+
         <button onClick={onScoring} style={{
           padding: "10px 20px", backgroundColor: "#51cf66", color: "white",
           border: "none", borderRadius: "10px", cursor: "pointer", fontWeight: "700",
         }}>
-          ❤️ Mes favoris
+          ✨ Recommandations
         </button>
       </div>
     </div>

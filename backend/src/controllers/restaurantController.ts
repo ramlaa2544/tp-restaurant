@@ -1,32 +1,22 @@
 import { Request, Response } from "express";
 import { RestaurantService } from "../services/restaurantService";
 import { createRestaurantSchema, updateRestaurantSchema } from "../schema/restaurantSchema";
-import { IFilter } from "../patterns/filters/IFilter";
-import { FilterByPrix } from "../patterns/filters/FilterByPrix";
-import { FilterByCuisine } from "../patterns/filters/FilterByCuisine";
-import { FilterByDistance } from "../patterns/filters/FilterByDistance";
-import { FilterByPopularite } from "../patterns/filters/FilterByPopularite";
-import { ISortStrategy } from "../patterns/strategies/ISortStrategy";
-import { SortByNote } from "../patterns/strategies/SortByNote";
-import { SortByPrix } from "../patterns/strategies/SortByPrix";
+import { RechercheFactory, CritereRecherche } from "../patterns/factory/RechercheFactory";
 
 export class RestaurantController {
   constructor(private service: RestaurantService) {}
 
-  getAll = async (req: Request, res: Response) => {
+  getAll = async (_req: Request, res: Response) => {
     try {
-      const restaurants = await this.service.getAll();
-      res.json(restaurants);
-    } catch (err) {
+      res.json(await this.service.getAll());
+    } catch {
       res.status(500).json({ message: "Erreur serveur" });
     }
   };
 
   getById = async (req: Request, res: Response) => {
     try {
-      const id = Number(req.params.id);
-      const restaurant = await this.service.getById(id);
-      res.json(restaurant);
+      res.json(await this.service.getById(Number(req.params.id)));
     } catch (err: any) {
       res.status(404).json({ message: err.message });
     }
@@ -34,24 +24,25 @@ export class RestaurantController {
 
   search = async (req: Request, res: Response) => {
     try {
-      const { prixMax, cuisine, distanceMax, populariteMin, triPar, profil } = req.query;
+      const criteres: CritereRecherche = {
+        prixMax: req.query.prixMax as string | undefined,
+        cuisine: req.query.cuisine as string | undefined,
+        distanceMax: req.query.distanceMax as string | undefined,
+        populariteMin: req.query.populariteMin as string | undefined,
+        triPar: req.query.triPar as string | undefined,
+      };
+      // Factory → filtres + Strategy de tri
+      const filters = RechercheFactory.creerFiltres(criteres);
+      const sort = RechercheFactory.creerTri(criteres.triPar);
+      res.json(await this.service.filtrerEtTrier(filters, sort));
+    } catch (err: any) {
+      res.status(500).json({ message: err.message });
+    }
+  };
 
-      const filters: IFilter[] = [];
-      if (prixMax) filters.push(new FilterByPrix(Number(prixMax)));
-      if (cuisine) filters.push(new FilterByCuisine(String(cuisine)));
-      if (distanceMax) filters.push(new FilterByDistance(Number(distanceMax)));
-      if (populariteMin) filters.push(new FilterByPopularite(Number(populariteMin)));
-
-      const sort: ISortStrategy = triPar === "prix"
-        ? new SortByPrix()
-        : new SortByNote();
-
-      const profilArray = profil
-        ? String(profil).split(",").map(Number)
-        : undefined;
-
-      const restaurants = await this.service.filtrerEtTrier(filters, sort, profilArray);
-      res.json(restaurants);
+  recommend = async (_req: Request, res: Response) => {
+    try {
+      res.json(await this.service.recommander());
     } catch (err: any) {
       res.status(500).json({ message: err.message });
     }
@@ -64,23 +55,20 @@ export class RestaurantController {
         res.status(400).json({ message: error.details[0].message });
         return;
       }
-      const restaurant = await this.service.create(value);
-      res.status(201).json(restaurant);
-    } catch (err: any) {
+      res.status(201).json(await this.service.create(value));
+    } catch {
       res.status(500).json({ message: "Erreur serveur" });
     }
   };
 
   update = async (req: Request, res: Response) => {
     try {
-      const id = Number(req.params.id);
       const { error, value } = updateRestaurantSchema.validate(req.body);
       if (error) {
         res.status(400).json({ message: error.details[0].message });
         return;
       }
-      const restaurant = await this.service.update(id, value);
-      res.json(restaurant);
+      res.json(await this.service.update(Number(req.params.id), value));
     } catch (err: any) {
       res.status(404).json({ message: err.message });
     }
@@ -88,8 +76,7 @@ export class RestaurantController {
 
   delete = async (req: Request, res: Response) => {
     try {
-      const id = Number(req.params.id);
-      await this.service.delete(id);
+      await this.service.delete(Number(req.params.id));
       res.json({ message: "Restaurant supprimé avec succès" });
     } catch (err: any) {
       res.status(404).json({ message: err.message });

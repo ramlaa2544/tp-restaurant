@@ -1,43 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
 import type { Restaurant } from "../type/restaurant";
 
+const API = "";
+
+/**
+ * Favoris gérés côté backend (table SQLite `favoris`).
+ * Le frontend ne fait que consommer l'API /favoris.
+ */
 export function useFavoris() {
-  const [favoris, setFavoris] = useState<Restaurant[]>(() => {
-    const saved = localStorage.getItem("favoris");
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [favoris, setFavoris] = useState<Restaurant[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const ajouterFavori = (restaurant: Restaurant) => {
-    const nouveaux = [...favoris, restaurant];
-    setFavoris(nouveaux);
-    localStorage.setItem("favoris", JSON.stringify(nouveaux));
+  const chargerFavoris = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API}/favoris`);
+      setFavoris(res.data);
+    } catch (err) {
+      console.error("Erreur chargement favoris:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    chargerFavoris();
+  }, [chargerFavoris]);
+
+  const ajouterFavori = async (restaurant: Restaurant) => {
+    await axios.post(`${API}/favoris/${restaurant.id}`);
+    await chargerFavoris();
   };
 
-  const supprimerFavori = (id: number) => {
-    const nouveaux = favoris.filter(f => f.id !== id);
-    setFavoris(nouveaux);
-    localStorage.setItem("favoris", JSON.stringify(nouveaux));
+  const supprimerFavori = async (id: number) => {
+    await axios.delete(`${API}/favoris/${id}`);
+    await chargerFavoris();
   };
 
-  const estFavori = (id: number) => {
-    return favoris.some(f => f.id === id);
+  const viderFavoris = async () => {
+    await axios.delete(`${API}/favoris`);
+    setFavoris([]);
   };
 
-  const getProfil = (): number[] => {
-    if (favoris.length === 0) return [];
+  const estFavori = (id: number) => favoris.some(f => f.id === id);
 
-    const noteMoy = favoris.reduce((sum, f) => sum + f.note, 0) / favoris.length;
-    const prixMoy = favoris.reduce((sum, f) => sum + f.prix, 0) / favoris.length;
-    const populariteMoy = favoris.reduce((sum, f) => sum + f.popularite, 0) / favoris.length;
-    const distanceMoy = favoris.reduce((sum, f) => sum + f.distance, 0) / favoris.length;
-
-    return [
-      noteMoy / 5,
-      1 - prixMoy / 100,
-      populariteMoy / 100,
-      1 - distanceMoy / 10,
-    ];
-  };
-
-  return { favoris, ajouterFavori, supprimerFavori, estFavori, getProfil };
+  return { favoris, loading, ajouterFavori, supprimerFavori, viderFavoris, estFavori, chargerFavoris };
 }

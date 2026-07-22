@@ -1,6 +1,7 @@
 import Database from "better-sqlite3";
 
 const db = new Database("dev.db");
+db.pragma("foreign_keys = ON");
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS restaurants (
@@ -30,6 +31,13 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nom TEXT NOT NULL
+  )
+`);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS favoris (
+    restaurantId INTEGER PRIMARY KEY,
+    FOREIGN KEY (restaurantId) REFERENCES restaurants(id) ON DELETE CASCADE
   )
 `);
 
