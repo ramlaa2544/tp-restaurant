@@ -48,13 +48,6 @@ export class RestaurantService {
     return sort.sort(filtres);
   }
 
-  /**
-   * Recommandation :
-   * - charge restos + favoris depuis la DB
-   * - calcule le barycentre pondéré des favoris
-   * - score chaque resto par proximité au profil (+ bonus cuisine)
-   * - trie du mieux matché au moins matché
-   */
   async recommander(): Promise<RestaurantAvecScore[]> {
     const favoris = this.favorisRepo ? await this.favorisRepo.findAll() : [];
     const tous = await this.repo.findAll();
@@ -69,7 +62,6 @@ export class RestaurantService {
       score: scoring.score(r, profil, bornes, favoris),
     }));
 
-    // Meilleur score d'abord ; à égalité, le plus proche (km) gagne
     scores.sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
       return a.distance - b.distance;

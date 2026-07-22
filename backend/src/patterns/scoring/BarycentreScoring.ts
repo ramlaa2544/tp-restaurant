@@ -1,18 +1,5 @@
 import { Restaurant } from "../../types/restaurant";
 
-/**
- * Design Pattern : Strategy — recommandation par barycentre pondéré.
- *
- * Comment ça marche :
- *  1. Chaque resto → vecteur normalisé [note↑, prix↓, popularité↑, distance↓]
- *  2. Profil utilisateur G = barycentre pondéré des favoris (poids = note)
- *     Sans favoris → idéal [1,1,1,1] (bon, pas cher, populaire, proche)
- *  3. score = 1 / (1 + distance_pondérée au profil)
- *     + bonus si même cuisine qu'un favori
- *
- * Un resto "très proche" (faible distance en km) a un score distance élevé.
- * S'il est cher / mal noté, les autres critères peuvent quand même le faire descendre.
- */
 export interface Bornes {
   note: { min: number; max: number };
   prix: { min: number; max: number };
@@ -31,8 +18,7 @@ export interface IScoring {
   ): number;
 }
 
-/** Poids des critères (somme = 1) */
-const POIDS = [0.30, 0.20, 0.20, 0.30]; // note, prix, popularité, distance
+const POIDS = [0.30, 0.20, 0.20, 0.30];
 
 const DOMAINES = {
   note: { min: 0, max: 5 },
@@ -47,7 +33,6 @@ function minMax(valeur: number, min: number, max: number): number {
   return Math.min(1, Math.max(0, n));
 }
 
-/** [note↑, prix↓, popularité↑, distance↓] chacun dans [0,1] */
 export function normaliser(restaurant: Restaurant, bornes: Bornes): number[] {
   return [
     minMax(Number(restaurant.note), bornes.note.min, bornes.note.max),
@@ -85,9 +70,6 @@ export class BarycentreScoring implements IScoring {
     };
   }
 
-  /**
-   * Barycentre pondéré : G = Σ(w_i · X_i) / Σ(w_i), w_i = note du favori.
-   */
   calculerProfil(favoris: Restaurant[], bornes: Bornes): number[] {
     if (favoris.length === 0) return [1, 1, 1, 1];
 
@@ -113,7 +95,6 @@ export class BarycentreScoring implements IScoring {
 
     const x = normaliser(restaurant, bornes);
 
-    // Distance euclidienne pondérée au barycentre
     let distCarree = 0;
     for (let j = 0; j < 4; j++) {
       const d = x[j] - profil[j];
@@ -121,7 +102,6 @@ export class BarycentreScoring implements IScoring {
     }
     let score = 1 / (1 + Math.sqrt(distCarree));
 
-    // Bonus cuisine : même cuisine qu'un favori → jusqu'à +0.15
     if (favoris.length > 0) {
       const poids = favoris.map(f => Math.max(Number(f.note) || 0.01, 0.01));
       const total = poids.reduce((a, b) => a + b, 0);
