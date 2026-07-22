@@ -1,0 +1,7 @@
+node_modules/
+dist/
+dev.db
+.env
+*.db
+favoris-mock.json
+restaurants-mock.json

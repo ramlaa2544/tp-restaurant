@@ -1,0 +1,14 @@
+import { Router } from "express";
+import controller from "../composition/restaurantComposition";
+
+const router = Router();
+
+router.get("/search", controller.search);
+router.get("/recommend", controller.recommend);
+router.get("/", controller.getAll);
+router.get("/:id", controller.getById);
+router.post("/", controller.create);
+router.put("/:id", controller.update);
+router.delete("/:id", controller.delete);
+
+export default router;
