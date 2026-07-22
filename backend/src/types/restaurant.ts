@@ -6,6 +6,8 @@ export interface Restaurant {
   prix: number;
   ville: string;
   categorieId: number;
+  popularite: number;
+  distance: number;
 }
 
 export interface RestaurantRequest {
@@ -15,6 +17,8 @@ export interface RestaurantRequest {
   prix: number;
   ville: string;
   categorieId: number;
+  popularite: number;
+  distance: number;
 }
 
 export type RestaurantUpdateRequest = Partial<RestaurantRequest>;

@@ -4,7 +4,8 @@
   "description": "API REST pour la gestion de restaurants, menus et catégories. Architecture N-tiers modulaire avec Node.js, TypeScript et SQLite.",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\""
+    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "build": "npm run build --prefix backend && npm run build --prefix frontend"
   },
   "repository": {
     "type": "git",
@@ -17,3 +18,4 @@
     "concurrently": "^9.0.0"
   }
 }
+

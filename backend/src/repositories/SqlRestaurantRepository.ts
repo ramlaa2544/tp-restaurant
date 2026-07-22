@@ -14,9 +14,9 @@ export class SqlRestaurantRepository implements IRestaurantRepository {
 
   async create(data: RestaurantRequest): Promise<Restaurant> {
     const result = db.prepare(`
-      INSERT INTO restaurants (nom, cuisine, note, prix, ville, categorieId)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `).run(data.nom, data.cuisine, data.note, data.prix, data.ville, data.categorieId);
+      INSERT INTO restaurants (nom, cuisine, note, prix, ville, categorieId, popularite, distance)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(data.nom, data.cuisine, data.note, data.prix, data.ville, data.categorieId, data.popularite, data.distance);
     return { id: result.lastInsertRowid as number, ...data };
   }
 
@@ -25,8 +25,8 @@ export class SqlRestaurantRepository implements IRestaurantRepository {
     if (!existing) return null;
     const updated = { ...existing, ...data };
     db.prepare(`
-      UPDATE restaurants SET nom=?, cuisine=?, note=?, prix=?, ville=?, categorieId=? WHERE id=?
-    `).run(updated.nom, updated.cuisine, updated.note, updated.prix, updated.ville, updated.categorieId, id);
+      UPDATE restaurants SET nom=?, cuisine=?, note=?, prix=?, ville=?, categorieId=?, popularite=?, distance=? WHERE id=?
+    `).run(updated.nom, updated.cuisine, updated.note, updated.prix, updated.ville, updated.categorieId, updated.popularite, updated.distance, id);
     return this.findById(id);
   }
 

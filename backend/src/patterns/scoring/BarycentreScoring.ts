@@ -8,13 +8,14 @@ export class BarycentreScoring implements IScoring {
   score(restaurant: Restaurant, profil: number[]): number {
     const noteNorm = restaurant.note / 5;
     const prixNorm = 1 - restaurant.prix / 100;
+    const populariteNorm = restaurant.popularite / 100;
+    const distanceNorm = 1 - restaurant.distance / 10;
 
-    // Poids : note compte 40%, prix compte 60%
-    const poids = [0.4, 0.6];
+    const attributs = [noteNorm, prixNorm, populariteNorm, distanceNorm];
 
     let distance = 0;
-    for (let i = 0; i < poids.length; i++) {
-      distance += poids[i] * Math.pow([noteNorm, prixNorm][i] - profil[i], 2);
+    for (let i = 0; i < attributs.length; i++) {
+      distance += Math.pow(attributs[i] - profil[i], 2);
     }
 
     return 1 / (1 + Math.sqrt(distance));

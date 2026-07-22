@@ -10,7 +10,9 @@ db.exec(`
     note REAL NOT NULL,
     prix REAL NOT NULL,
     ville TEXT NOT NULL,
-    categorieId INTEGER NOT NULL
+    categorieId INTEGER NOT NULL,
+    popularite REAL NOT NULL DEFAULT 0,
+    distance REAL NOT NULL DEFAULT 0
   )
 `);
 

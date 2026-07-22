@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-
+import type { Restaurant } from "./type/restaurant";
 import { RestaurantCard } from "./components/RestaurantCard";
 import { FilterBar } from "./components/FilterBar";
 import { RestaurantForm } from "./components/RestaurantForm";
 import { useFavoris } from "./hooks/useFavoris";
-import type { Restaurant } from "./type/restaurant";
 
 const API = "";
 
@@ -14,6 +13,8 @@ function App() {
   const [prixMax, setPrixMax] = useState("");
   const [cuisine, setCuisine] = useState("");
   const [triPar, setTriPar] = useState("note");
+  const [distanceMax, setDistanceMax] = useState("");
+  const [populariteMin, setPopulariteMin] = useState("");
   const [loading, setLoading] = useState(false);
 
   const { favoris, ajouterFavori, supprimerFavori, estFavori } = useFavoris();
@@ -32,6 +33,8 @@ function App() {
     const params: Record<string, string> = { triPar };
     if (prixMax) params.prixMax = prixMax;
     if (cuisine) params.cuisine = cuisine;
+    if (distanceMax) params.distanceMax = distanceMax;
+    if (populariteMin) params.populariteMin = populariteMin;
     const res = await axios.get(`${API}/restaurants/search`, { params });
     setRestaurants(res.data);
     setLoading(false);
@@ -77,13 +80,9 @@ function App() {
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#f0f2f5", fontFamily: "'Segoe UI', sans-serif" }}>
-
-      {/* HEADER */}
       <div style={{
         background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-        padding: "40px 20px",
-        textAlign: "center",
-        color: "white",
+        padding: "40px 20px", textAlign: "center", color: "white",
         boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
       }}>
         <h1 style={{ fontSize: "2.5rem", margin: "0 0 10px 0", fontWeight: "800" }}>
@@ -93,80 +92,50 @@ function App() {
           Trouvez le restaurant parfait pour vous
         </p>
         <div style={{
-          display: "inline-block",
-          marginTop: "15px",
+          display: "inline-block", marginTop: "15px",
           backgroundColor: "rgba(255,255,255,0.2)",
-          borderRadius: "20px",
-          padding: "6px 16px",
-          fontSize: "0.9rem",
+          borderRadius: "20px", padding: "6px 16px", fontSize: "0.9rem",
         }}>
           ❤️ {favoris.length} favori(s)
         </div>
         <button onClick={viderFavoris} style={{
-          marginTop: "10px",
-          padding: "6px 16px",
-          backgroundColor: "rgba(255,255,255,0.2)",
-          color: "white",
-          border: "1px solid rgba(255,255,255,0.4)",
-          borderRadius: "20px",
-          cursor: "pointer",
-          fontSize: "0.85rem",
-          display: "block",
-          margin: "10px auto 0",
+          marginTop: "10px", padding: "6px 16px",
+          backgroundColor: "rgba(255,255,255,0.2)", color: "white",
+          border: "1px solid rgba(255,255,255,0.4)", borderRadius: "20px",
+          cursor: "pointer", fontSize: "0.85rem", display: "block", margin: "10px auto 0",
         }}>
           🗑️ Vider les favoris
         </button>
       </div>
 
       <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "30px 20px" }}>
-
-        {/* FORMULAIRE AJOUT */}
         <RestaurantForm onAjouter={ajouterRestaurant} />
-
-        {/* FILTRES */}
         <FilterBar
-          prixMax={prixMax}
-          cuisine={cuisine}
-          triPar={triPar}
-          onPrixMax={setPrixMax}
-          onCuisine={setCuisine}
-          onTriPar={setTriPar}
-          onSearch={rechercher}
-          onScoring={recommander}
+          prixMax={prixMax} cuisine={cuisine} triPar={triPar}
+          distanceMax={distanceMax} populariteMin={populariteMin}
+          onPrixMax={setPrixMax} onCuisine={setCuisine} onTriPar={setTriPar}
+          onDistanceMax={setDistanceMax} onPopulariteMin={setPopulariteMin}
+          onSearch={rechercher} onScoring={recommander}
         />
-
-        {/* BOUTON RESET */}
         <button onClick={chargerTous} style={{
-          marginBottom: "20px",
-          padding: "8px 16px",
-          backgroundColor: "white",
-          border: "1px solid #ddd",
-          borderRadius: "6px",
-          cursor: "pointer",
-          fontSize: "0.9rem",
-          color: "#666",
+          marginBottom: "20px", padding: "8px 16px", backgroundColor: "white",
+          border: "1px solid #ddd", borderRadius: "6px", cursor: "pointer",
+          fontSize: "0.9rem", color: "#666",
         }}>
           🔄 Voir tous les restaurants
         </button>
 
-        {/* LOADING */}
         {loading && (
           <div style={{ textAlign: "center", padding: "40px", color: "#667eea", fontSize: "1.1rem" }}>
             ⏳ Chargement...
           </div>
         )}
 
-        {/* LISTE */}
         {!loading && (
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-            gap: "20px",
-          }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "20px" }}>
             {restaurants.map(r => (
               <RestaurantCard
-                key={r.id}
-                restaurant={r}
+                key={r.id} restaurant={r}
                 estFavori={estFavori(r.id)}
                 onFavori={gererFavori}
                 onSupprimer={supprimerRestaurant}

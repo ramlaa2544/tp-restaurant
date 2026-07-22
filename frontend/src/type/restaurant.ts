@@ -6,4 +6,6 @@ export interface Restaurant {
   prix: number;
   ville: string;
   categorieId: number;
+  popularite: number;
+  distance: number;
 }

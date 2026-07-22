@@ -1,7 +1,6 @@
-
+import { IRestaurantRepository } from "./IRestaurantRepository";
 import { Restaurant, RestaurantRequest, RestaurantUpdateRequest } from "../types/restaurant";
 import { restaurantsMock } from "../mocks/restaurants";
-import { IRestaurantRepository } from "./IRestaurantRepository";
 
 export class InMemoryRestaurantRepository implements IRestaurantRepository {
 

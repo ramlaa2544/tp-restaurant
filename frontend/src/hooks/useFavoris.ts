@@ -1,7 +1,6 @@
 import { useState } from "react";
 import type { Restaurant } from "../type/restaurant";
 
-
 export function useFavoris() {
   const [favoris, setFavoris] = useState<Restaurant[]>(() => {
     const saved = localStorage.getItem("favoris");
@@ -29,14 +28,15 @@ export function useFavoris() {
 
     const noteMoy = favoris.reduce((sum, f) => sum + f.note, 0) / favoris.length;
     const prixMoy = favoris.reduce((sum, f) => sum + f.prix, 0) / favoris.length;
+    const populariteMoy = favoris.reduce((sum, f) => sum + f.popularite, 0) / favoris.length;
+    const distanceMoy = favoris.reduce((sum, f) => sum + f.distance, 0) / favoris.length;
 
-    // Normalisation identique au backend
-    const noteNorm = noteMoy / 5;
-    const prixNorm = 1 - prixMoy / 100;
-
-    console.log("Profil calculé:", noteNorm, prixNorm);
-
-    return [noteNorm, prixNorm];
+    return [
+      noteMoy / 5,
+      1 - prixMoy / 100,
+      populariteMoy / 100,
+      1 - distanceMoy / 10,
+    ];
   };
 
   return { favoris, ajouterFavori, supprimerFavori, estFavori, getProfil };

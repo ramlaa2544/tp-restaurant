@@ -7,6 +7,8 @@ export const createRestaurantSchema = Joi.object({
   prix: Joi.number().min(0).required(),
   ville: Joi.string().required(),
   categorieId: Joi.number().required(),
+  popularite: Joi.number().min(0).max(100).required(),
+  distance: Joi.number().min(0).required(),
 });
 
 export const updateRestaurantSchema = Joi.object({
@@ -16,4 +18,6 @@ export const updateRestaurantSchema = Joi.object({
   prix: Joi.number().min(0),
   ville: Joi.string(),
   categorieId: Joi.number(),
+  popularite: Joi.number().min(0).max(100),
+  distance: Joi.number().min(0),
 });
